@@ -3,6 +3,14 @@
 include_once('atrium_event_repeat.features.inc');
 
 /**
+ * Implementation of hook_enable().
+ */
+function atrium_event_repeat_enable() {
+  // Make sure this module loads after atrium.module.
+  db_query("UPDATE {system} SET weight = 1 WHERE name = 'atrium_event_repeat'");
+}
+
+/**
 * Implementation of hook_views_pre_build().
 */
 function atrium_event_repeat_views_pre_build(&$view) {
@@ -14,7 +22,8 @@ function atrium_event_repeat_views_pre_build(&$view) {
   // affect our Views without going through every
   // default view and setting the distinct flag.
   //
-  // Here we override the hook for calendar_listing and calendar_upcoming.
+  // Here we override the hook for calendar_listing and calendar_upcoming
+  // views.
   if ($view->name=='calendar_listing' || $view->name=='calendar_upcoming') {
     $view->display_handler->set_option('distinct', 0);
   }

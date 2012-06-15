@@ -19,6 +19,7 @@ Enable the feature and enjoy.
 
 * Change in #34 [3] are implemented in the module with hook_view_pre_build().
 
+
 [2] https://community.openatrium.com/issues/node/1788#comment-5629
 [3] https://community.openatrium.com/issues/node/1788#comment-8149
 
