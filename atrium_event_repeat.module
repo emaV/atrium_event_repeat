@@ -1,0 +1,22 @@
+<?php
+
+include_once('atrium_event_repeat.features.inc');
+
+/**
+* Implementation of hook_views_pre_build().
+*/
+function atrium_event_repeat_views_pre_build(&$view) {
+  // https://community.openatrium.com/issues/node/1788#comment-8149
+  // When OG public nodes are in play it is (very) possible to get
+  // duplicate rows because of the node_access() JOIN and WHERE
+  // combination. In atrium.module the hook is implemented with
+  // a rather brute force method of making sure this doesn't
+  // affect our Views without going through every
+  // default view and setting the distinct flag.
+  //
+  // Here we override the hook for calendar_listing and calendar_upcoming.
+  if ($view->name=='calendar_listing' || $view->name=='calendar_upcoming') {
+    $view->display_handler->set_option('distinct', 0);
+  }
+}
+
