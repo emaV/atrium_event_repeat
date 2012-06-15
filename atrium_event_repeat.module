@@ -29,3 +29,73 @@ function atrium_event_repeat_views_pre_build(&$view) {
   }
 }
 
+/**
+ * Implementation of hook_theme_registry_alter().
+ * - override litecal_timeslot theming ONLY if not already overridden by theme.
+ */
+function atrium_event_repeat_theme_registry_alter(&$theme_registry) {
+  if ($theme_registry['litecal_timeslot']['function'] == 'theme_litecal_timeslot') {
+    $theme_registry['litecal_timeslot']['function'] = 'atrium_event_repeat_litecal_timeslot';
+  }
+}
+
+/**
+ * Theme a single timeslot.
+ *  - solve the Quick add issue
+ *    https://community.openatrium.com/issues/node/1788#comment-9254
+ */
+function atrium_event_repeat_litecal_timeslot($timespan, $start, $date, $format, $quickadd = array()) {
+  $add = '';
+  $attr = array('style' => '');
+  $link_attr = array('class' => 'label');
+
+  // Position
+  if ($start < $timespan->granularity - 1) {
+    $attr['style'] .= ' left:'. number_format($start / $timespan->granularity * 100, 2) .'%;';
+  }
+  // We position last items differently since slots often use borders and need tight alignment.
+  else {
+    $attr['style'] .= ' right:0%;';
+  }
+
+  // Width
+  $attr['style'] .= ' width:'. number_format(1 / $timespan->granularity * 100, 2) .'%';
+
+  // Classes
+  $attr['class'] = 'litecal-slot rows-'. count($timespan->built);
+
+  // Add class for today's slot.
+  static $today;
+  $today = !isset($today) ? date_format_date(date_now(), 'custom', 'Y-m-d') : $today;
+  if ($today == date_format_date($date, 'custom', 'Y-m-d')) {
+    $attr['class'] .= ' litecal-slot-today';
+  }
+
+  // If this timeslot is outside of the timespan's real time range,
+  // add a class so it can be displayed accordingly.
+  if (!litecal_date_between($date, $timespan->real_from, $timespan->real_to)) {
+    $attr['class'] .= ' litecal-slot-gutter';
+  }
+
+  $attr = drupal_attributes($attr);
+
+  // Quickadd
+  if (!empty($quickadd['type'])) {
+    $type = str_replace('_', '-', $quickadd['type']);
+    $item = menu_get_item("node/add/{$type}");
+    if ($item && $item['access']) {
+      $options = array('query' => "edit[{$quickadd['field']}][value][date]=". date_format_date($date, 'custom', 'm/d/Y') . 
+        "&edit[{$quickadd['field']}][value][time]=" . date_format_date($date, 'custom', 'g:iA') ."&destination=" . $_GET['q']);
+      $link_attr['href'] = url("node/add/{$type}", $options);
+      $add = "<span class='add'>". t('+ Add') ."</span>";
+    }
+  }
+  $link_attr = drupal_attributes($link_attr);
+
+  $formatted = date_format_date($date, 'custom', $format);
+
+  return "<div {$attr}>
+    <a $link_attr>{$add}<span class='num'>{$formatted}</span></a>
+  </div>";
+}
+
