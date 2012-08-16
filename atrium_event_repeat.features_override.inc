@@ -50,19 +50,6 @@ function atrium_event_repeat_default_features_overrides() {
           ),
           1 => array(
             'type' => 'array',
-            'key' => 'input_format',
-          ),
-        ),
-        'value' => 'm/d/Y - g:i:sa',
-      ),
-      4 => array(
-        'keys' => array(
-          0 => array(
-            'type' => 'array',
-            'key' => 'widget',
-          ),
-          1 => array(
-            'type' => 'array',
             'key' => 'type',
           ),
         ),
