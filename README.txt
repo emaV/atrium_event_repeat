@@ -13,13 +13,13 @@ Enable the feature and enjoy.
 
 == NOTES ==
 
-* Requires "Date Repeat API" and "Features Override".
+* Requires "Date Repeat API" and "Features Override" (6.x-1.x branch)
 
 * Changes in #20 [2] are handled as features overrides.
 
 * Change in #34 [3] are implemented in the module with hook_view_pre_build().
 
-* Issue reported in #41 [4] is solved overriding theme_litecal_timeslot.
+* Issue reported in #41 [4] solved overriding theme_litecal_timeslot.
 
 [2] https://community.openatrium.com/issues/node/1788#comment-5629
 [3] https://community.openatrium.com/issues/node/1788#comment-8149
